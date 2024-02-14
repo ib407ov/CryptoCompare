@@ -45,13 +45,3 @@ func GetDataCurrencyRate(crypto []string) (CryptoCompareResponse, error) {
 
 	return result, nil
 }
-
-//func main() {
-//	crypto := []string{"THETA", "KCS", "XTZ", "BTT", "BGB",
-//		"1000SATS", "CHZ", "MANA", "NEO", "PYTH",
-//		"CFX", "EOS", "WEMIX", "BLUR", "OSMO", "ROSE",
-//		"RON", "KLAY", "KAVA", "BONK", "PENDLE", "USDD",
-//		"AKT", "WOO"}
-//	res, _ := GetDataCurrencyRate(crypto)
-//	fmt.Println(res)
-//}
