@@ -1,4 +1,4 @@
-package cryptocompare
+package main
 
 import (
 	"encoding/json"
@@ -24,7 +24,7 @@ func GetDataCurrencyRate(crypto []string) (CryptoCompareResponseStruct, error) {
 	var dataStruct CryptoCompareResponseStruct
 
 	indexA := 0
-	indexB := 25
+	indexB := 1
 	for i := 0; i < len(crypto)/25+1; i++ {
 		if indexB > (len(crypto)) {
 			indexB = len(crypto)
@@ -48,11 +48,12 @@ func GetDataCurrencyRate(crypto []string) (CryptoCompareResponseStruct, error) {
 			return CryptoCompareResponseStruct{}, err
 		}
 
-		//Unmarshal body
 		err = json.Unmarshal(body, &result)
 		if err != nil {
-			fmt.Println("Помилка при розборі JSON:", err)
-			return CryptoCompareResponseStruct{}, err
+			//fmt.Println("Помилка при розборі JSON:", err)
+			indexA += 1
+			indexB += 1
+			continue
 		}
 
 		for key, val := range result {
@@ -62,8 +63,8 @@ func GetDataCurrencyRate(crypto []string) (CryptoCompareResponseStruct, error) {
 			})
 		}
 
-		indexA += 25
-		indexB += 25
+		indexA += 1
+		indexB += 1
 	}
 
 	return dataStruct, nil
