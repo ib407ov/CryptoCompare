@@ -1,4 +1,4 @@
-package main
+package cryptocompare
 
 import (
 	"encoding/json"
