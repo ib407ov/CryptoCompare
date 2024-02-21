@@ -24,17 +24,23 @@ func GetDataCurrencyRate(crypto []string) (CryptoCompareResponseStruct, error) {
 	var dataStruct CryptoCompareResponseStruct
 
 	indexA := 0
-	indexB := 1
-	for i := 0; i < len(crypto)/25+1; i++ {
-		if indexB > (len(crypto)) {
-			indexB = len(crypto)
+	indexB := 25
+	countFors := len(crypto) / 25
+	if len(crypto)%25 != 0 {
+		countFors += 1
+	}
+
+	for i := 0; i < countFors; i++ {
+		if indexB > len(crypto) {
+			indexB = len(crypto) - 1
 		}
 
 		newCrypto := crypto[indexA:indexB]
-		newCryptoStrig := strings.Join(newCrypto, ",")
+		newCryptoString := strings.Join(newCrypto, ",")
 
 		//Get API from URL
-		url := fmt.Sprintf("https://min-api.cryptocompare.com/data/pricemulti?fsyms=%s&tsyms=USD", newCryptoStrig)
+		key := "7622387be1531249e85802476ed5ebe7af9b18a1a2446da5d606c3c06d8a9fb9"
+		url := fmt.Sprintf("https://min-api.cryptocompare.com/data/pricemulti?fsyms=%s&tsyms=USD&api_key=%s", newCryptoString, key)
 		resp, err := http.Get(url)
 		defer resp.Body.Close()
 		if err != nil {
@@ -47,24 +53,23 @@ func GetDataCurrencyRate(crypto []string) (CryptoCompareResponseStruct, error) {
 			fmt.Println("Помилка при читанні відповіді:", err)
 			return CryptoCompareResponseStruct{}, err
 		}
-
 		err = json.Unmarshal(body, &result)
 		if err != nil {
-			//fmt.Println("Помилка при розборі JSON:", err)
-			indexA += 1
-			indexB += 1
+			fmt.Println("Помилка при розборі JSON:", err)
+			indexA += 25
+			indexB += 25
 			continue
 		}
+		indexA += 25
+		indexB += 25
 
-		for key, val := range result {
-			dataStruct.Data = append(dataStruct.Data, CryptoCompare{
-				Symbol: key,
-				Price:  val.Price,
-			})
-		}
+	}
 
-		indexA += 1
-		indexB += 1
+	for key, val := range result {
+		dataStruct.Data = append(dataStruct.Data, CryptoCompare{
+			Symbol: key,
+			Price:  val.Price,
+		})
 	}
 
 	return dataStruct, nil
